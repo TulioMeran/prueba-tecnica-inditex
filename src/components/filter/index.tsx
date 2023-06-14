@@ -3,8 +3,9 @@ import { Box, Typography } from '@mui/material'
 
 interface FilterProps {
     podcastCount: number
+    handlerSearch: (value: string) => void
 }
-const Filter: FC<FilterProps> = ({ podcastCount }) => {
+const Filter: FC<FilterProps> = ({ podcastCount, handlerSearch }) => {
     return (
         <Box component='div'
             sx={{
@@ -23,7 +24,7 @@ const Filter: FC<FilterProps> = ({ podcastCount }) => {
                 marginInline: 1,
                 fontWeight: '600'
             }} >{podcastCount}</Typography>
-            <input style={{ padding: 10, width: 250, borderRadius: 5, borderBlockColor: 'gray' }} placeholder="Filter podcasts..." />
+            <input style={{ padding: 10, width: 250, borderRadius: 5, borderBlockColor: 'gray' }} placeholder="Filter podcasts..." onChange={(event) => handlerSearch(event.target.value)} />
         </Box>
     )
 }
