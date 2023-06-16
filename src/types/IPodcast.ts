@@ -20,9 +20,14 @@ interface IId {
     }
 }
 
+interface ISummary {
+    label: string;
+}
+
 export interface IPodcast {
     "im:name": IName;
     "im:image": IImg[];
     id: IId;
     "im:artist": IArtist;
+    summary: ISummary;
 }

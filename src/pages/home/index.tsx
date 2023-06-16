@@ -5,15 +5,22 @@ import PodCastItem from "../../components/podCastItem"
 import { podcastContext } from "../../contexts/podcast"
 import Layout from "../../layout"
 import { IPodcast } from '../../types/IPodcast'
+import { useNavigate } from 'react-router-dom'
 
 const HomePage = () => {
 
-    const { podcasts } = useContext(podcastContext)
+    let navigate = useNavigate()
+    const { podcasts, setCurrentPodCast } = useContext(podcastContext)
     const [podcastResult, setPodcastResult] = useState<IPodcast[]>(podcasts)
 
     const handlerSearch = (value: string) => {
         const newList = podcasts.filter(p => p["im:name"].label.toLowerCase().includes(value) || p["im:artist"].label.toLowerCase().includes(value))
         setPodcastResult(newList)
+    }
+
+    const handlerNavigationToPodCast = (item: IPodcast) => {
+        setCurrentPodCast(item)
+        navigate(`/podcast/${item.id.attributes["im:id"]}`)
     }
 
     return (
@@ -26,7 +33,8 @@ const HomePage = () => {
                             key={item.id.attributes["im:id"]}
                             title={item["im:name"].label}
                             img={item["im:image"][0].label}
-                            author={item["im:artist"].label} />)}
+                            author={item["im:artist"].label}
+                            onClick={() => handlerNavigationToPodCast(item)} />)}
                 </Box>
             </div>
         </Layout>
