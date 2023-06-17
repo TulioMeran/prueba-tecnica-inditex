@@ -1,24 +1,58 @@
-import { Box, Paper, Typography } from "@mui/material"
+import { Box, Paper, Typography, SxProps } from "@mui/material"
 import { useContext } from "react"
-import { useParams } from "react-router-dom"
 import { podcastContext } from "../../contexts/podcast"
 import PodcastLayout from "../../layout/podcast"
 
 const EpisodePage = () => {
     const { currentEpisode, currentPodCast } = useContext(podcastContext)
 
+    const sxStyles = () => {
+
+        const container: SxProps = {
+            width: '100%', display: 'flex', flexDirection: 'column'
+        }
+
+        const labelName: SxProps = {
+            fontWeight: '700', fontSize: '1.5rem'
+        }
+
+        const description: SxProps = {
+            fontStyle: 'italic',
+            fontSize: '0.8rem',
+            marginTop: 1
+        }
+
+        const sponsorName: SxProps = {
+            ...description,
+            marginTop: 2
+        }
+
+        const audio: SxProps = {
+            width: '90%', alignSelf: 'center', marginBottom: 25
+        }
+
+
+        return {
+            container,
+            labelName,
+            description,
+            sponsorName,
+            audio
+        }
+    }
+
     return (
         <PodcastLayout podcastItem={currentPodCast} >
-            <Paper sx={{ width: '100%', display: 'flex', flexDirection: 'column' }} >
+            <Paper sx={sxStyles().container} >
                 <Box component='div' sx={{ padding: 5 }} >
-                    <Typography sx={{ fontWeight: '700', fontSize: '1.5rem' }} > {currentEpisode.collectionName}</Typography>
-                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.8rem', marginTop: 1 }} variant="body1" >{currentEpisode.description}</Typography>
-                    <Typography sx={{ fontStyle: 'italic', fontSize: '0.8rem', marginTop: 2 }}  >This episode is sponsored by {currentEpisode.collectionName}. </Typography>
+                    <Typography sx={sxStyles().labelName} > {currentEpisode.collectionName}</Typography>
+                    <Typography sx={sxStyles().description} variant="body1" >{currentEpisode.description}</Typography>
+                    <Typography sx={sxStyles().sponsorName}  >This episode is sponsored by {currentEpisode.collectionName}. </Typography>
                 </Box>
 
-                <audio controls muted controlsList="nodownload noplaybackrate" style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}  >
+                <Box component='audio' controls muted controlsList="nodownload noplaybackrate" sx={sxStyles().audio}  >
                     <source type="audio/mpeg" src={currentEpisode.episodeUrl} />
-                </audio>
+                </Box>
             </Paper>
         </PodcastLayout>
 

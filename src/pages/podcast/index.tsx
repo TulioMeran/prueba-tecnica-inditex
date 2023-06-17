@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, SxProps, Typography } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'
 import { podcastContext } from '../../contexts/podcast';
@@ -6,6 +6,7 @@ import { Episode, IEpisodeResponse } from '../../types/iEpisodeResponse';
 import { format } from 'date-fns'
 import { millisToMinutesAndSeconds } from '../../utils';
 import PodcastLayout from '../../layout/podcast';
+import * as constants from '../../constants'
 
 const PodCastPage = () => {
 
@@ -16,7 +17,7 @@ const PodCastPage = () => {
 
     useEffect(() => {
 
-        fetch(`https://itunes.apple.com/lookup?id=${params.podcastId}&media=podcast&entity=podcastEpisode&limit=20`)
+        fetch(constants.URL_EPISODE(params.podcastId ? params.podcastId : ''))
             .then(response => response.text())
             .then(data => {
                 console.log(JSON.parse(data))
@@ -33,11 +34,31 @@ const PodCastPage = () => {
         navigate(`/podcast/${params.podcastId}/episode/${item.episodeGuid}`)
     }
 
+    const sxStyles = () => {
+
+        const episodeCount: SxProps = {
+            padding: 1,
+            fontWeight: '700'
+        }
+
+        const trackName: SxProps = {
+            color: 'blue', ":hover": {
+                cursor: 'pointer'
+            }
+        }
+
+        return {
+            episodeCount,
+            trackName
+        }
+    }
+
+
     return (
         <PodcastLayout podcastItem={currentPodCast} >
             <div>
                 <Paper sx={{ marginY: 2 }} >
-                    <Typography sx={{ padding: 1, fontWeight: '700' }} >Episodes: {episodeResponse.resultCount}</Typography>
+                    <Typography sx={sxStyles().episodeCount} >Episodes: {episodeResponse.resultCount}</Typography>
                 </Paper>
                 {episodeResponse.results ? <Paper>
                     <table style={{ width: '100%' }} >
@@ -52,11 +73,7 @@ const PodCastPage = () => {
                         <tbody>
                             {episodeResponse.results.map(item => (
                                 <tr>
-                                    <Box component='td' sx={{
-                                        color: 'blue', ":hover": {
-                                            cursor: 'pointer'
-                                        }
-                                    }} onClick={() => handlerNavigateToEpisode(item)} > {item.trackName}</Box>
+                                    <Box component='td' sx={sxStyles().trackName} onClick={() => handlerNavigateToEpisode(item)} > {item.trackName}</Box>
                                     <td>{format(new Date(item.releaseDate), "dd/MM/yyyy")}</td>
                                     <td style={{ textAlign: 'center' }} >{millisToMinutesAndSeconds(item.trackTimeMillis)}</td>
                                 </tr>

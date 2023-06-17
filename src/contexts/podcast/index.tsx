@@ -1,4 +1,5 @@
 import { createContext, FC, useEffect, useState } from "react"
+import * as constants from "../../constants";
 import { Episode } from "../../types/iEpisodeResponse";
 import { IPodcast } from "../../types/IPodcast";
 
@@ -24,7 +25,7 @@ const PodCastProvider: FC<PodCastProviderProps> = ({ children }) => {
 
     useEffect(() => {
 
-        fetch("https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json")
+        fetch(constants.URL_PODCAST)
             .then(response => response.json())
             .then(data => {
                 setPodcasts(data.feed.entry)

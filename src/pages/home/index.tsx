@@ -1,4 +1,4 @@
-import { Box } from "@mui/material"
+import { Box, SxProps } from "@mui/material"
 import { useContext, useState } from "react"
 import Filter from "../../components/filter"
 import PodCastItem from "../../components/podCastItem"
@@ -23,11 +23,21 @@ const HomePage = () => {
         navigate(`/podcast/${item.id.attributes["im:id"]}`)
     }
 
+    const sxStyles = () => {
+        const container: SxProps = {
+            display: 'flex', flexDirection: 'row', flexWrap: 'wrap', padding: 5
+        }
+
+        return {
+            container
+        }
+    }
+
     return (
         <Layout>
             <div>
                 <Filter podcastCount={podcastResult.length} handlerSearch={handlerSearch} />
-                <Box component='div' sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', padding: 5 }} >
+                <Box component='div' sx={sxStyles().container} >
                     {podcastResult.map(item =>
                         <PodCastItem
                             key={item.id.attributes["im:id"]}
