@@ -1,14 +1,18 @@
 import { Box, Paper, Typography } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { podcastContext } from '../../contexts/podcast';
-import Layout from '../../layout';
-import { IEpisodeResponse } from '../../types/iEpisodeResponse';
+import { Episode, IEpisodeResponse } from '../../types/iEpisodeResponse';
+import { format } from 'date-fns'
+import { millisToMinutesAndSeconds } from '../../utils';
+import PodcastLayout from '../../layout/podcast';
+
 const PodCastPage = () => {
 
     const params = useParams();
-    const { currentPodCast } = useContext(podcastContext)
+    const { currentPodCast, setCurrentEpisode } = useContext(podcastContext)
     const [episodeResponse, setEpisodeResponse] = useState<IEpisodeResponse>({} as IEpisodeResponse)
+    let navigate = useNavigate()
 
     useEffect(() => {
 
@@ -24,58 +28,47 @@ const PodCastPage = () => {
 
     }, [])
 
+    const handlerNavigateToEpisode = (item: Episode) => {
+        setCurrentEpisode(item)
+        navigate(`/podcast/${params.podcastId}/episode/${item.episodeGuid}`)
+    }
+
     return (
-        <Layout>
-            <Box component='div' sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }} >
-                <Paper sx={{
-                    width: '30%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'space-evenly'
-                }}
-                    elevation={3} >
-                    <Box component='img' sx={{ width: 200, borderRadius: 2 }} src={currentPodCast['im:image'][0].label} />
-                    <Box component='div' sx={{ alignSelf: 'start', paddingLeft: 2 }} >
-                        <Typography sx={{ fontWeight: '700' }} >{currentPodCast['im:name'].label}</Typography>
-                        <Typography sx={{ fontStyle: 'italic' }} >by {currentPodCast['im:artist'].label}</Typography>
-                    </Box>
-                    <Box component='div' sx={{ paddingLeft: 1 }} >
-                        <Typography sx={{ fontWeight: '700' }}>Description:</Typography>
-                        <Typography sx={{ fontStyle: 'italic', fontSize: 13, marginTop: 1 }} >{currentPodCast.summary.label}</Typography>
-                    </Box>
-
+        <PodcastLayout podcastItem={currentPodCast} >
+            <div>
+                <Paper sx={{ marginY: 2 }} >
+                    <Typography sx={{ padding: 1, fontWeight: '700' }} >Episodes: {episodeResponse.resultCount}</Typography>
                 </Paper>
-                {episodeResponse.results && <Box component='div'>
-                    <Paper sx={{ marginY: 2 }} >
-                        <Typography sx={{ padding: 1, fontWeight: '700' }} >Episodes: {episodeResponse.resultCount}</Typography>
-                    </Paper>
-                    <Paper>
-                        <table>
-                            <thead>
+                {episodeResponse.results ? <Paper>
+                    <table style={{ width: '100%' }} >
+                        <thead>
+                            <tr>
+                                <th style={{ textAlign: 'left' }} >Title</th>
+                                <th style={{ textAlign: 'left' }} >Date</th>
+                                <th style={{ textAlign: 'left' }} >Duration</th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            {episodeResponse.results.map(item => (
                                 <tr>
-                                    <th>Title</th>
-                                    <th>Date</th>
-                                    <th>Duration</th>
+                                    <Box component='td' sx={{
+                                        color: 'blue', ":hover": {
+                                            cursor: 'pointer'
+                                        }
+                                    }} onClick={() => handlerNavigateToEpisode(item)} > {item.trackName}</Box>
+                                    <td>{format(new Date(item.releaseDate), "dd/MM/yyyy")}</td>
+                                    <td style={{ textAlign: 'center' }} >{millisToMinutesAndSeconds(item.trackTimeMillis)}</td>
                                 </tr>
-
-                            </thead>
-                            <tbody>
-                                {episodeResponse.results.map(item => (
-                                    <tr>
-                                        <td>{item.trackName}</td>
-                                        <td>{item.releaseDate}</td>
-                                        <td>{item.trackTimeMillis}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </Paper>
-                </Box>}
+                            ))}
+                        </tbody>
+                    </table>
+                </Paper> : null}
+            </div>
 
 
-            </Box>
-        </Layout>
+
+        </PodcastLayout>
     )
 }
 
