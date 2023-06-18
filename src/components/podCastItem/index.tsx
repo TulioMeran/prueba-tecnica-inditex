@@ -36,7 +36,7 @@ const PodCastItem: FC<PodCastItemProps> = ({ img, author, title, onClick }) => {
     }
 
     return (
-        <Paper elevation={3} sx={sxStyles().container} onClick={onClick} >
+        <Paper data-testid="podcastitem" elevation={3} sx={sxStyles().container} onClick={onClick} >
             <Box component='img' src={img} sx={sxStyles().photo} />
             <Typography sx={sxStyles().title} >{title}</Typography>
             <Typography sx={{ marginBottom: 2 }} >Author: {author}</Typography>

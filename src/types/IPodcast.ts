@@ -5,9 +5,6 @@ interface IName {
 
 interface IImg {
     label: string;
-    attributes: {
-        height: string;
-    }
 }
 
 interface IArtist {
