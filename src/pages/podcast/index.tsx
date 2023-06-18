@@ -20,7 +20,6 @@ const PodCastPage = () => {
         fetch(constants.URL_EPISODE(params.podcastId ? params.podcastId : ''))
             .then(response => response.text())
             .then(data => {
-                console.log(JSON.parse(data))
                 setEpisodeResponse(JSON.parse(data))
             })
             .catch(err => {
