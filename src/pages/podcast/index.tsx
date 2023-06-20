@@ -1,35 +1,31 @@
 import { Box, Paper, SxProps, Typography } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'
-import { podcastContext } from '../../contexts/podcast';
 import { Episode, IEpisodeResponse } from '../../types/iEpisodeResponse';
 import { format } from 'date-fns'
 import { millisToMinutesAndSeconds } from '../../utils';
 import PodcastLayout from '../../layout/podcast';
-import * as constants from '../../constants'
+import { useGetAllEpisodeQuery } from '../../api/services';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentPodcast, setCurrentEpisode } from '../../state/podcast';
 
 const PodCastPage = () => {
 
-    const params = useParams();
-    const { currentPodCast, setCurrentEpisode } = useContext(podcastContext)
-    const [episodeResponse, setEpisodeResponse] = useState<IEpisodeResponse>({} as IEpisodeResponse)
     let navigate = useNavigate()
+    let dispatch = useDispatch()
+    const params = useParams();
 
-    useEffect(() => {
+    const { data, isLoading } = useGetAllEpisodeQuery(params.podcastId ? params.podcastId : '')
 
-        fetch(constants.URL_EPISODE(params.podcastId ? params.podcastId : ''))
-            .then(response => response.text())
-            .then(data => {
-                setEpisodeResponse(JSON.parse(data))
-            })
-            .catch(err => {
-                console.log(err)
-            })
+    console.log(data)
 
-    }, [])
+    const [episodeResponse, setEpisodeResponse] = useState<IEpisodeResponse>({} as IEpisodeResponse)
+
+
+    const currentPodCast = useSelector(selectCurrentPodcast)
 
     const handlerNavigateToEpisode = (item: Episode) => {
-        setCurrentEpisode(item)
+        dispatch(setCurrentEpisode(item))
         navigate(`/podcast/${params.podcastId}/episode/${item.episodeGuid}`)
     }
 
@@ -51,6 +47,12 @@ const PodCastPage = () => {
             trackName
         }
     }
+
+    useEffect(() => {
+        if (!isLoading) {
+            setEpisodeResponse(data!)
+        }
+    }, [isLoading])
 
 
     return (

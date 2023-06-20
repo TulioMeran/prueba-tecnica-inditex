@@ -1,19 +1,16 @@
 import { render, screen } from '@testing-library/react'
+import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
-import { podcastContext } from '../../../contexts/podcast'
 import { Episode } from '../../../types/iEpisodeResponse'
 import { IPodcast } from '../../../types/IPodcast'
 import EpisodePageComponent from '../index'
+import configureStore from 'redux-mock-store'
 
 describe('EpisodePage component unit testing', () => {
 
     it('Component should render episode labels', () => {
 
-        const setCurrentEpisode = jest.fn()
-        const setCurrentPodCast = jest.fn()
-
-
-        const currentPodCast: IPodcast = {
+        const podcast: IPodcast = {
             summary: { label: "summary for test" },
             id: { attributes: { "im:id": "1234" } },
             "im:name": { label: 'Tulio' },
@@ -24,7 +21,7 @@ describe('EpisodePage component unit testing', () => {
         const NAME = 'Tulio Meran';
         const DESCRIPTION = 'one description'
 
-        const currentEpisode: Episode = {
+        const episode: Episode = {
             collectionId: '1',
             collectionName: NAME,
             description: DESCRIPTION,
@@ -35,12 +32,24 @@ describe('EpisodePage component unit testing', () => {
             trackTimeMillis: 234123
         }
 
+        const initialState = {
+            podcast: {
+                podcast,
+                episode
+            }
+        }
+
+        const mockStore = configureStore()
+        let store = mockStore(initialState)
+
         render(
-            <BrowserRouter>
-                <podcastContext.Provider value={{ setCurrentEpisode, setCurrentPodCast, currentPodCast, currentEpisode, podcasts: [] }} >
+
+            <Provider store={store} >
+                <BrowserRouter>
                     <EpisodePageComponent />
-                </podcastContext.Provider>
-            </BrowserRouter>
+                </BrowserRouter>
+            </Provider>
+
         )
 
         expect(screen.getByText(NAME)).toBeInTheDocument()

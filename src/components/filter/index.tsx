@@ -14,7 +14,8 @@ const Filter: FC<FilterProps> = ({ podcastCount, handlerSearch }) => {
             flexDirection: 'row',
             justifyContent: 'flex-end',
             alignItems: 'center',
-            marginTop: 2
+            marginTop: 2,
+            marginRight: { md: 15, xs: 2 }
         }
 
         const podCastCountLabel: SxProps = {

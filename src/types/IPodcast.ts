@@ -28,3 +28,9 @@ export interface IPodcast {
     "im:artist": IArtist;
     summary: ISummary;
 }
+
+export interface IPodcastResponse {
+    feed: {
+        entry: IPodcast[]
+    }
+}

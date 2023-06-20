@@ -1,10 +1,11 @@
 import { Box, Paper, Typography, SxProps } from "@mui/material"
-import { useContext } from "react"
-import { podcastContext } from "../../contexts/podcast"
+import { useSelector } from "react-redux"
 import PodcastLayout from "../../layout/podcast"
+import { selectCurrentEpisode, selectCurrentPodcast } from "../../state/podcast"
 
 const EpisodePage = () => {
-    const { currentEpisode, currentPodCast } = useContext(podcastContext)
+    const currentPodCast = useSelector(selectCurrentPodcast)
+    const currentEpisode = useSelector(selectCurrentEpisode)
 
     const sxStyles = () => {
 
